@@ -3,7 +3,8 @@ NOTE:
 This system is implemented as a LocalScript to directly handle player input, camera effects, and responsive
 movement. In a game setting, final position and other validation would be server-authoritative, but for the
 sake of the demonstration all logic will remain client-sided, in one centralised LocalScript (would also be
-typically split into multiple modules).
+typically split into multiple modules, but that doesn't mean modules have been bundled togethere here as all
+sections in the code are more mechanisms than modules, and would be split for readability and maintainability).
 ]]
 --[[
 Ghost-Step Ability Lifecycle:
