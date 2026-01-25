@@ -3,8 +3,7 @@ NOTE:
 This system is implemented as a LocalScript to directly handle player input, camera effects, and responsive
 movement. In a game setting, final position and other validation would be server-authoritative, but for the
 sake of the demonstration all logic will remain client-sided, in one centralised LocalScript (would also be
-typically split into multiple modules, but that doesn't mean modules have been bundled togethere here as all
-sections in the code are more mechanisms than modules, and would be split for readability and maintainability).
+typically split into multiple modules).
 ]]
 --[[
 Ghost-Step Ability Lifecycle:
@@ -82,11 +81,11 @@ local AnimationId = "rbxassetid://102031021896528"
 local function captureSnapshot(model: Model, character: Model)
 	if not character and character.Parent then return end
 	-- Loop through model and capture the CFrame of each part that is also inside the character
-	for _, part in pairs(model:GetChildren()) do
+	for _, part in ipairs(model:GetChildren()) do -- iPairs not pairs
 		if part:IsA("BasePart") then
 			part.CanCollide = false
 			part.Transparency = STARTING_GHOST_TRANSPARENCY
-			if part.Name ~= "HumanoidRootPart" then part.CollisionGroup = GHOST_COLLISION_GROUP_NAME end
+			if part.Name ~= "HumanoidRootPart" then part.CollisionGroup = GHOST_COLLISION_GROUP_NAME end -- Prevents snapshots colliding with player
 			local charPart = character:FindFirstChild(part.Name)
 			if charPart then
 				part.CFrame = charPart.CFrame
@@ -180,7 +179,7 @@ local function shadowFade(character, duration)
 	local decals = {}
 	
 	-- Store original transparencies
-	for _, descendant in pairs(character:GetDescendants()) do
+	for _, descendant in ipairs(character:GetDescendants()) do
 		if descendant:IsA("BasePart") and descendant.Transparency < 1 then
 			parts[descendant] = descendant.Transparency
 		elseif descendant:IsA("Decal") then
@@ -219,6 +218,7 @@ local function shadowFade(character, duration)
 	end
 end
 
+-- Simple functions used to visualise raycast line and point of impact whilst debugging
 local function createRayLine(origin, direction): BasePart
 	local part = Instance.new("Part")
 	part.Anchored = true
@@ -399,7 +399,7 @@ function ObjectPool:Release(object: Model)
 end
 -- Resets the Transparency, CFrame and visibility of models in pool
 function ObjectPool:_resetObject(object: Model)
-	for _, part in object:GetDescendants() do
+	for _, part in ipairs(object:GetDescendants()) do
 		if not part:IsA("BasePart") then continue end
 		part.Transparency = 1
 		part.CFrame = CFrame.new()
@@ -666,7 +666,7 @@ end
 
 -- Simple Tween function to fade out a model
 local function applyFade(snapshot: Model, sessionTrove)
-	for _, part in pairs(snapshot:GetChildren()) do
+	for _, part in ipairs(snapshot:GetChildren()) do
 		if part:IsA("BasePart") then
 			local fadeTween = TweenService:Create(part, FADE_INFO, {Transparency = 1})
 			fadeTween:Play()
